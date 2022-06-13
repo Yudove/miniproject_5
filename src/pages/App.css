@@ -37,9 +37,10 @@
 .CheckButton {
   border: none;
   width: 100%;
-  max-width: 50px;
+  max-width: 45px;
   height: 45px;
   background: #ff0000;
+  color: white;
   margin-top: 2%;
 }
 
@@ -48,7 +49,7 @@
   width: 100%;
   max-width: 100px;
   height: 35px;
-
+  color: white;
   background: #ff0000;
   margin-top: 2%;
 }

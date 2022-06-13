@@ -118,9 +118,11 @@ const Header = () => {
           style={{
             marginRight: "1%",
             border: "none",
-            backgroundColor: "yellowgreen",
+            backgroundColor: "rgb(255, 203, 5)",
             height: "2.5em",
             width: "6em",
+            // fontSize: "1em",
+            color: "rgb(53, 100, 173)",
           }}
           onClick={() => {
             navigate(`/login`);
@@ -131,9 +133,10 @@ const Header = () => {
         <button
           style={{
             border: "none",
-            backgroundColor: "yellowgreen",
+            backgroundColor: "rgb(255, 203, 5)",
             height: "2.5em",
             width: "6em",
+            color: "rgb(53, 100, 173)",
           }}
           onClick={() => {
             navigate(`/signup`);

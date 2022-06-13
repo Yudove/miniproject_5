@@ -1,11 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-//예시
-// import counterReducer from '../features/counter/counterSlice'
+// import user from "./modules/user";
+import pokelistReducer from "./modules/pokelist";
 
-export const store = configureStore({
+const store = configureStore({
   reducer: {
-    //예시
-    // counter: counterReducer,
+    pokelist: pokelistReducer,
   },
 });
+
+export default store;
