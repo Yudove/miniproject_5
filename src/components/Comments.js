@@ -1,25 +1,50 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-
+import { loadCommentDB } from "../redux/modules/comments";
 
 
 const Comments = () => {
+    
+    // const dispatch = useDispatch();
+    // const [isloaded, setIsloaded] = useState(false);
+    
+    // useEffect(() => {
+    //     async function load() {
+    //         await dispatch(loadCommentDB());
+    //         setIsloaded(true);
+    //     }
+    //     load();
+    // }, []);
+    
+    const comments = useSelector((state) => state)
+    console.log(comments);
+    
+    
+
+    
 
     return (
         <Ul>
-                <div>
+            {comments.map((comment, index) => {
+                return(
                     <div>
-                    <TitleP>
-                    <span>닉네임</span><span> | </span><span>작성시간</span>
-                    </TitleP>
-                    </div>
-                    <Hr />
-                    <div>
-                    <CommentP>
-                    <span>코멘트</span>
-                    </CommentP>
-                    </div>
-                </div>
+                        <div>
+                            <TitleP>
+                                <span>{comment.nickname}</span><span> | </span><span>{comment.createdAt}</span>
+                            </TitleP>
+                        </div>
+                        <Hr />
+                        <div>
+                            <CommentP>
+                                <span>{comment.comments}</span>
+                            </CommentP>
+                        </div>
+                    </div> 
+                )
+               
+            })}
+                
         </Ul>
     );
 };
@@ -30,6 +55,7 @@ width: 560px;
 border: 1px solid black;
 border-radius: 5px;
 display: flex;
+flex-direction: column;
 jusfify-content: center;
 `;
 

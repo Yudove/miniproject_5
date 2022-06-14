@@ -1,27 +1,52 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
+
+
+import axios from "axios";
 
 
 
 const DetailImage = () => {
+
+    const params = useParams();
+    const post_index = params.index;
+
+    const [data, setData] = useState({
+        id:0,
+        name:"name",
+        imageUrl:"",
+        num:"000",
+        element:[],
+        info:"...",
+        likesCnt:0
+    });
+
+    useEffect(async () => {
+        const {data} = await axios.get("http://localhost:5001/pokemon");
+        console.log('poke', data);
+        setData(data[0]);
+    }, []);
+    
+    console.log('data', data);
 
     return (
         <>
         <Container>
             <StyledImage>
             <Div>
-
+            <img style={{width: "300px", height: "300px"}} src={data.imageUrl}/>
             </Div>
             </StyledImage>
             <ImageInfo>
-                <h3>포켓몬 이름</h3>
-                <InfoBox>
-                    <Info><span>특성</span></Info> 
-                    <Info>특성이에요ㅁㄴㅇㅁㅈㅇㅁㄴㅇㅁㅈㅇ</Info>
-                    <Info><span>특성</span></Info> 
-                    <Info>특성이에요ㅁㄴㅇㅁㅈㅇㅁㄴㅇㅁㅈㅇ</Info>
-                    <Info><span>특성</span></Info> 
-                    <Info>특성이에요ㅁㄴㅇㅁㅈㅇㅁㄴㅇㅁㅈㅇ</Info>
+                <h3></h3>
+                <InfoBox> 
+                    <Info><h1>{data.num}</h1></Info>
+                    <Info><h1>{data.name}</h1></Info>
+                    <Info><InfoTitle>특성</InfoTitle></Info> 
+                    <Info>{data.element}</Info>
+                    <Info><InfoTitle>설명</InfoTitle></Info> 
+                    <Info>{data.info}</Info>
                 </InfoBox>
             </ImageInfo>
             
@@ -62,10 +87,14 @@ margin-bottom: 10px;
 `
 
 const Div = styled.div`
-background-color: red;
+background-color: skyblue;
 margin-top: 30px;
 width: 300px;
 height: 300px;
 `;
+
+const InfoTitle = styled.h1`
+font-size: 15px;
+`
 
 export default DetailImage;

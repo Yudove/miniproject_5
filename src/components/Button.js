@@ -5,11 +5,11 @@ const StyledButton = styled.button`
 height: 25px;
 `
 
-const Button = () => {
+const Button = (props) => {
 
     return (
         
-            <StyledButton>input</StyledButton>
+            <StyledButton {...props}></StyledButton>
         
     );
 };
