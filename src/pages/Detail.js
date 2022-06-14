@@ -9,7 +9,6 @@ import { loadCommentDB } from "../redux/modules/comments";
 
 
 const StyledInt = styled.div`
-
 text-align: center;
 `
 

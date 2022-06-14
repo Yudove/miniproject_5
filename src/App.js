@@ -1,22 +1,17 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import './pages/App.css';
-
-import styled from "styled-components";
-import Detail from "./pages/Detail";
-
-const Container = styled.div`
-padding-top: 30px;
-
-`
+import Main from "../src/pages/Main";
+import Detailpage from "./pages/Detailpage";
 
 function App() {
+ 
+    
+
   return (
-    <>
-    <Container>
-        <Detail />
-    </Container>
-    </>
+    <Routes>
+    <Route path="/detail/:id" element={<Detailpage/>} />
+    </Routes>
   );
 }
 
