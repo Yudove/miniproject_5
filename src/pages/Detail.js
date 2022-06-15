@@ -3,6 +3,7 @@ import axios from "axios";
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
 import Header from "../components/Header";
+
 const Detail = () => {
   const params = useParams();
   const detail_id = params.id;
@@ -41,8 +42,9 @@ const Detail = () => {
 
   return (
     <>
-      <Header />
+    <Header />
       {/* 이미지 div */}
+      <Container>
       <ContainerImage>
         <ImageDiv>
           <Div>
@@ -56,26 +58,26 @@ const Detail = () => {
               if (data?.likeByMe) {
                 axios
                   .post(`http://localhost:5001/pokemon/${detail_id}`, {
-                    behavior: "unlike",
+                    // behavior: "unlike",
                     likesCnt: data.likesCnt - 1,
                   })
                   .then((response) => {
                     setData((current) => ({
                       ...current,
-                      behavior: "unlike",
+                    //   behavior: "unlike",
                       likesCnt: current.likesCnt - 1,
                     }));
                   });
               } else {
                 axios
                   .post(`http://localhost:5001/pokemon/${detail_id}`, {
-                    behavior: "like",
+                    // behavior: "like",
                     likesCnt: data.likesCnt + 1,
                   })
                   .then((response) => {
                     setData((current) => ({
                       ...current,
-                      behavior: "like",
+                    //   behavior: "like",
                       likesCnt: current.likesCnt + 1,
                     }));
                   });
@@ -182,11 +184,17 @@ const Detail = () => {
           })}
         </Ul>
       </div>
+      </Container>
     </>
   );
 };
 
+const Container = styled.div`
+padding-top: 40px;
+`
+
 const ContainerImage = styled.div`
+    
   border: 1px solid gray;
   margin: 0px auto;
   margin-bottom: 30px;
