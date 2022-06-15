@@ -1,8 +1,7 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import Main from "../src/pages/Main";
-import Detailpage from "./pages/Detailpage";
+import Detailpage from "./pages/Detail";
 
 function App() {
  
