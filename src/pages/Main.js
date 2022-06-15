@@ -15,7 +15,7 @@ const Main = (props) => {
 
   //index 값(PK) 받아오려면
   const params = useParams();
-  const index = params.index;
+  const index = params.index + 1;
 
   //리덕스에서 리스트 가져오기
   const poke_list = useSelector((state) => state.pokelist.list);

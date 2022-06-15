@@ -6,7 +6,7 @@ import Header from "../components/Header";
 
 const Detail = () => {
   const params = useParams();
-  const detail_id = params.id;
+  const pokemonId = Number(params.id) + 1;
 
   const [comments, setComment] = useState([]);
 
@@ -22,18 +22,20 @@ const Detail = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    axios.get(`http://localhost:5001/pokemon/${params.id}`).then((response) => {
+    axios.get(`http://13.124.220.124/detail/${pokemonId}`).then((response) => {
       setData(response.data);
+      console.log(pokemonId);
     });
     axios
-      .get(`http://localhost:5001/comments?postId=${params.id}`)
+      .get(`http://13.124.220.124/comment/${pokemonId}`)
       .then((response) => {
-        setComment(response.data);
+        // setComment(response.data);
+        console.log(response);
       });
   }, []);
 
   const deletePost = (id) => {
-    axios.delete(`http://localhost:5001/pokemon/${id}`).then((response) => {
+    axios.delete(`http://13.124.220.124/${id}`).then((response) => {
       setData((current) => current.filter((v) => v.id !== id));
     });
   };
@@ -57,7 +59,7 @@ const Detail = () => {
             onClick={() => {
               if (data?.likeByMe) {
                 axios
-                  .post(`http://localhost:5001/pokemon/${detail_id}`, {
+                  .post(`http://13.124.220.124/like/${pokemonId}`, {
                     // behavior: "unlike",
                     likesCnt: data.likesCnt - 1,
                   })
@@ -70,7 +72,7 @@ const Detail = () => {
                   });
               } else {
                 axios
-                  .post(`http://localhost:5001/pokemon/${detail_id}`, {
+                  .post(`http://13.124.220.124/like/${pokemonId}`, {
                     // behavior: "like",
                     likesCnt: data.likesCnt + 1,
                   })
@@ -113,7 +115,7 @@ const Detail = () => {
         <Button
           onClick={() => {
             axios
-              .post(`http://localhost:5001/comments`, {
+              .post(`http://13.124.220.124/comment/${pokemonId}`, {
                 comment: input_text.current.value,
                 postId: params.id,
               })
@@ -144,10 +146,11 @@ const Detail = () => {
                     <span>{comment.comment}</span>
                   </CommentP>
                 </div>
+                <div>
                 <button
                   onClick={() => {
                     axios
-                      .patch(`http://localhost:5001/comments/${comment.id}`, {
+                      .patch(`http://13.124.220.124/comment/${pokemonId}`, {
                         comment: input_text.current.value,
                       })
                       .then((response) => {
@@ -167,7 +170,7 @@ const Detail = () => {
                 <button
                   onClick={() => {
                     axios
-                      .delete(`http://localhost:5001/comments/${comment.id}`)
+                      .delete(`http://13.124.220.124/comment/${pokemonId}`)
                       .then((response) => {
                         setComment((current) =>
                           current.filter((value) => {
@@ -179,6 +182,7 @@ const Detail = () => {
                 >
                   삭제
                 </button>
+                </div>
               </div>
             );
           })}
@@ -194,7 +198,6 @@ padding-top: 40px;
 `
 
 const ContainerImage = styled.div`
-    
   border: 1px solid gray;
   margin: 0px auto;
   margin-bottom: 30px;
@@ -209,8 +212,6 @@ const ImageDiv = styled.div`
   position: relative;
   padding: 20px;
 `;
-
-
 
 const Div = styled.div`
   background-color: skyblue;
