@@ -7,8 +7,7 @@ import Header from "../components/Header";
 const Detail = () => {
   const params = useParams();
   const detail_id = params.id;
-  console.log(detail_id);
-
+  const pokemonId = Number(params.id) + 1;
   const [comments, setComment] = useState([]);
 
   const [info, setInfo] = useState({
@@ -23,18 +22,18 @@ const Detail = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    axios.get(`http://localhost:5001/pokemon/${params.id}`).then((response) => {
+    axios.get(`http://13.124.220.124/detail/${pokemonId}`).then((response) => {
       setData(response.data);
+      console.log(pokemonId);
     });
-    axios
-      .get(`http://localhost:5001/comments?postId=${params.id}`)
-      .then((response) => {
-        setComment(response.data);
-      });
+    axios.get(`http://13.124.220.124/comment/${pokemonId}`).then((response) => {
+      // setComment(response.data);
+      console.log(response);
+    });
   }, []);
 
   const deletePost = (id) => {
-    axios.delete(`http://localhost:5001/pokemon/${id}`).then((response) => {
+    axios.delete(`http://13.124.220.124/${id}`).then((response) => {
       setData((current) => current.filter((v) => v.id !== id));
     });
   };
@@ -113,20 +112,38 @@ const Detail = () => {
           <Input type="text" ref={input_text} />
           <Button
             onClick={() => {
-              axios
-                .post(`http://localhost:5001/comments`, {
-                  comment: input_text.current.value,
-                  postId: params.id,
-                })
-                .then((response) => {
-                  setComment((current) => [...current, response.data]);
-                });
+              if (data?.likeByMe) {
+                axios
+                  .post(`http://13.124.220.124/like/${pokemonId}`, {
+                    // behavior: "unlike",
+                    likesCnt: data.likesCnt - 1,
+                  })
+                  .then((response) => {
+                    setData((current) => ({
+                      ...current,
+                      //   behavior: "unlike",
+                      likesCnt: current.likesCnt - 1,
+                    }));
+                  });
+              } else {
+                axios
+                  .post(`http://13.124.220.124/like/${pokemonId}`, {
+                    // behavior: "like",
+                    likesCnt: data.likesCnt + 1,
+                  })
+                  .then((response) => {
+                    setData((current) => ({
+                      ...current,
+                      //   behavior: "like",
+                      likesCnt: current.likesCnt + 1,
+                    }));
+                  });
+              }
             }}
           >
             버튼
           </Button>
         </InputDiv>
-
         <div>
           <Ul>
             {comments.map((comment, index) => {
@@ -145,41 +162,43 @@ const Detail = () => {
                       <span>{comment.comment}</span>
                     </CommentP>
                   </div>
-                  <button
-                    onClick={() => {
-                      axios
-                        .patch(`http://localhost:5001/comments/${comment.id}`, {
-                          comment: input_text.current.value,
-                        })
-                        .then((response) => {
-                          setComment((current) =>
-                            current.map((value) => {
-                              if (comment.id === value.id) {
-                                value.comment = input_text.current.value;
-                              }
-                              return value;
-                            })
-                          );
-                        });
-                    }}
-                  >
-                    수정
-                  </button>
-                  <button
-                    onClick={() => {
-                      axios
-                        .delete(`http://localhost:5001/comments/${comment.id}`)
-                        .then((response) => {
-                          setComment((current) =>
-                            current.filter((value) => {
-                              return comment.id !== value.id;
-                            })
-                          );
-                        });
-                    }}
-                  >
-                    삭제
-                  </button>
+                  <div>
+                    <button
+                      onClick={() => {
+                        axios
+                          .patch(`http://13.124.220.124/comment/${pokemonId}`, {
+                            comment: input_text.current.value,
+                          })
+                          .then((response) => {
+                            setComment((current) =>
+                              current.map((value) => {
+                                if (comment.id === value.id) {
+                                  value.comment = input_text.current.value;
+                                }
+                                return value;
+                              })
+                            );
+                          });
+                      }}
+                    >
+                      수정
+                    </button>
+                    <button
+                      onClick={() => {
+                        axios
+                          .delete(`http://13.124.220.124/comment/${pokemonId}`)
+                          .then((response) => {
+                            setComment((current) =>
+                              current.filter((value) => {
+                                return comment.id !== value.id;
+                              })
+                            );
+                          });
+                      }}
+                    >
+                      삭제
+                    </button>
+                  </div>
                 </div>
               );
             })}
@@ -212,6 +231,7 @@ const ImageDiv = styled.div`
 
 const Div = styled.div`
   background-color: skyblue;
+  margin-bottom: 1px;
   margin-top: 30px;
   width: 300px;
   height: 300px;
