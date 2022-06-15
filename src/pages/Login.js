@@ -1,13 +1,34 @@
 //src > pages > Login.js
 //로그인 페이지
 
-import React from "react";
+import React, { useState } from "react";
 import "./App.css";
+import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import Header from "../components/Header";
 
+import { actionCreators as userActions } from "../redux/modules/user";
+
 const Login = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  //id, 비밀번호 정보 확인
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const loginUserinfo = {
+    email: email,
+    password: password,
+  };
+  const LoginAccess = () => {
+    if (email === "" || password === "") {
+      window.alert("아이디와 비밀번호를 입력해주세요.");
+      return;
+    }
+    dispatch(userActions.loginDB(email, password));
+  };
 
   return (
     <>
@@ -15,20 +36,24 @@ const Login = () => {
       <div className="SignupBox">
         <p>로그인</p>
         <div style={{ display: "flex", justifyContent: "center" }}>
-          <input className="Input" placeholder="아이디를 입력하세요" />
-        </div>
-        <div className="InputBottomText">
-          *아이디는 이메일(test@test.test) 형식입니다.
+          <input
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
+            className="Input"
+            placeholder="아이디(이메일 형식)를 입력하세요"
+          />
         </div>
 
         <input
+          onChange={(e) => {
+            setPassword(e.target.value);
+          }}
           type="password"
           className="Input"
-          placeholder="비밀번호를 입력하세요"
+          placeholder="비밀번호(8~20자리)를 입력하세요"
         />
-        <div className="InputBottomText">
-          *비밀번호는 8자리 이상 20자리 이하입니다.
-        </div>
+        <div className="InputBottomText"></div>
 
         <div
           style={{
@@ -38,7 +63,16 @@ const Login = () => {
             margin: "2%",
           }}
         >
-          <button className="SignupButton">로그인 피카</button>
+          <button
+            // disabled={!email || !password ? true : false}
+            className="SignupButton"
+            onClick={() => {
+              LoginAccess();
+              console.log(email, password);
+            }}
+          >
+            로그인 피카
+          </button>
           <button
             className="SignupButton"
             style={{ backgroundColor: "orange" }}
@@ -46,7 +80,8 @@ const Login = () => {
               navigate("/signup");
             }}
           >
-            회원 아니면 회원가입하러 가기
+            {/* 아직 회원이 아니신가요?  */}
+            회원가입하기
           </button>
         </div>
       </div>

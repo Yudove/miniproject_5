@@ -1,13 +1,14 @@
 //src > pages > Main.js
 //메인 페이지 (헤더는 따로)
 
-import React from "react";
+import React, { useRef, useState } from "react";
 import "./App.css";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import sampleimg from "../components/000101.png";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 const Main = (props) => {
   //상세페이지 연결에 필요
@@ -21,6 +22,26 @@ const Main = (props) => {
   const poke_list = useSelector((state) => state.pokelist.list);
   console.log(poke_list);
 
+  //검색 기능 (onChange aciton을 통해 input value값에 저장된 검색어를 가져온다.)
+  const [search, setSearch] = useState("");
+
+  const onChangeSearch = (e) => {
+    e.preventDefault();
+    setSearch(e.target.value);
+  };
+  // filter, includes를 이용하여 특정값이 검색어를 포함 시 필터링을 해주어 검색 구현.
+
+  // const onSearch = (e) => {
+  //   e.preventDefault();
+  //   if(search ===null || search === ""){ //검색어 없는 경우 전체 리스트 반환
+  //     axios.get(common.baseURL + "name")
+  //     .then((res)=>{
+  //       setLists(res.data.List)
+  //       setCurrentPosts(res.data.List)
+  //     })
+  //   }
+  // }
+
   return (
     <>
       <Header />
@@ -31,10 +52,19 @@ const Main = (props) => {
           <img src={sampleimg} alt="img" />
         </div>
         {/* 검색창 */}
+        {/* <form onSubmit={(e) => onSearch(e)}> */}
         <div className="SearchBox">
-          <input className="SearchInput"></input>
-          <button>🔍</button>
+          <input
+            type="text"
+            value={search}
+            placeholder="포켓몬을 검색하세요"
+            onChange={onChangeSearch}
+            className="SearchInput"
+          ></input>
+          <button type="submit">🔍</button>
         </div>
+        {/* </form> */}
+
         {/* 포켓몬 1세대 리스트 */}
         <CardBox>
           {/* 리스트 불러와서 매핑 */}
@@ -42,18 +72,19 @@ const Main = (props) => {
             return (
               <>
                 <Card
-                  key={index}
+                  key="card"
                   onClick={() => {
                     navigate(`/detail/` + index);
                   }}
                 >
-                  <TextBox>
+                  {/* <TextBox>
                     <div>{props.name}</div>
                     <br />
                     <div>{props.num}</div>
-                  </TextBox>
+                  </TextBox> */}
 
                   <img
+                    key="imgurl"
                     style={{
                       position: "absolute",
                       width: "100%",

@@ -1,5 +1,4 @@
 //src > redux > modules > pokelist.js
-
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -12,7 +11,7 @@ const initialState = {
 //포켓몬 리스트 불러오기
 export const loadPostDB = () => {
   return async function (dispatch) {
-    axios.get("http://localhost:5001/pokemon").then((response) => {
+    await axios.get("http://localhost:5001/pokemon").then((response) => {
       dispatch(pokelistLOAD(response.data));
     });
   };
