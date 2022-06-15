@@ -9,23 +9,7 @@ const setCookie = (cookieName, value, exp = 5) => {
 
 //getCookie 쿠키 불러오기 함수 설정 (페이지 로드 시 쿠키유무 여부 판단하여 세팅)
 const getCookie = (cookieName) => {
-  var x, y;
-  var val = document.cookie.split(";");
-  for (var i = 0; i < val.length; i++) {
-    x = val[i].substr(0, val[i].indexOf("="));
-    y = val[i].substr(val[i].indexOf("=") + 1);
-    x = x.replace(/^\s+|\s+$/g, "");
-    // 앞과 뒤의 공백 제거하기
-    if (x === cookieName) {
-      return unescape(y);
-      // unescape로 디코딩 후 값 리턴
-    }
-  }
+  return cookies.get(cookieName);
 };
 
-const deleteCookie = (cookieName) => {
-  let date = new Date("2021-01-01").toUTCString();
-  document.cookie = cookieName + "=; expires=" + date;
-};
-
-export { setCookie, getCookie, deleteCookie };
+export { setCookie, getCookie };

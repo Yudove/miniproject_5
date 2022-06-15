@@ -3,7 +3,6 @@
 
 import React, { useState } from "react";
 import "./App.css";
-import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import Header from "../components/Header";
@@ -16,18 +15,19 @@ const Login = () => {
 
   //id, 비밀번호 정보 확인
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [pw, setPw] = useState("");
 
   const loginUserinfo = {
     email: email,
-    password: password,
+    pw: pw,
   };
+  // console.log(loginUserinfo);
   const LoginAccess = () => {
-    if (email === "" || password === "") {
+    if (email === "" || pw === "") {
       window.alert("아이디와 비밀번호를 입력해주세요.");
       return;
     }
-    dispatch(userActions.loginDB(email, password));
+    dispatch(userActions.loginDB({ email, pw }));
   };
 
   return (
@@ -47,7 +47,7 @@ const Login = () => {
 
         <input
           onChange={(e) => {
-            setPassword(e.target.value);
+            setPw(e.target.value);
           }}
           type="password"
           className="Input"
@@ -68,7 +68,7 @@ const Login = () => {
             className="SignupButton"
             onClick={() => {
               LoginAccess();
-              console.log(email, password);
+              console.log(email, pw);
             }}
           >
             로그인 피카

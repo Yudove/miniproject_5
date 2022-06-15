@@ -7,6 +7,7 @@ import Header from "../components/Header";
 const Detail = () => {
   const params = useParams();
   const detail_id = params.id;
+  console.log(detail_id);
 
   const [comments, setComment] = useState([]);
 
@@ -42,159 +43,158 @@ const Detail = () => {
 
   return (
     <>
-    <Header />
+      <Header />
       {/* 이미지 div */}
       <Container>
-      <ContainerImage>
-        <ImageDiv>
-          <Div>
-            <img
-              style={{ width: "300px", height: "300px" }}
-              src={data?.imageUrl}
-            />
-          </Div>
-          <button
+        <ContainerImage>
+          <ImageDiv>
+            <Div>
+              <img
+                style={{ width: "300px", height: "300px" }}
+                src={data?.imageUrl}
+              />
+            </Div>
+            <button
+              onClick={() => {
+                if (data?.likeByMe) {
+                  axios
+                    .post(`http://localhost:5001/pokemon/${detail_id}`, {
+                      // behavior: "unlike",
+                      likesCnt: data.likesCnt - 1,
+                    })
+                    .then((response) => {
+                      setData((current) => ({
+                        ...current,
+                        //   behavior: "unlike",
+                        likesCnt: current.likesCnt - 1,
+                      }));
+                    });
+                } else {
+                  axios
+                    .post(`http://localhost:5001/pokemon/${detail_id}`, {
+                      // behavior: "like",
+                      likesCnt: data.likesCnt + 1,
+                    })
+                    .then((response) => {
+                      setData((current) => ({
+                        ...current,
+                        //   behavior: "like",
+                        likesCnt: current.likesCnt + 1,
+                      }));
+                    });
+                }
+              }}
+            >
+              {data?.likeByMe && "[ME]"} 좋아요 {data?.likesCnt}
+            </button>
+          </ImageDiv>
+          <InfoDiv>
+            <InfoBox>
+              <Info>
+                <h1>{data?.num}</h1>
+              </Info>
+              <Info>
+                <h1>{data?.name}</h1>
+              </Info>
+              <Info>
+                <InfoTitle>특성</InfoTitle>
+              </Info>
+              <Info>{data?.element}</Info>
+              <Info>
+                <InfoTitle>설명</InfoTitle>
+              </Info>
+              <Info>{data?.info}</Info>
+            </InfoBox>
+          </InfoDiv>
+        </ContainerImage>
+
+        {/* 인풋 div */}
+        <InputDiv>
+          <Input type="text" ref={input_text} />
+          <Button
             onClick={() => {
-              if (data?.likeByMe) {
-                axios
-                  .post(`http://localhost:5001/pokemon/${detail_id}`, {
-                    // behavior: "unlike",
-                    likesCnt: data.likesCnt - 1,
-                  })
-                  .then((response) => {
-                    setData((current) => ({
-                      ...current,
-                    //   behavior: "unlike",
-                      likesCnt: current.likesCnt - 1,
-                    }));
-                  });
-              } else {
-                axios
-                  .post(`http://localhost:5001/pokemon/${detail_id}`, {
-                    // behavior: "like",
-                    likesCnt: data.likesCnt + 1,
-                  })
-                  .then((response) => {
-                    setData((current) => ({
-                      ...current,
-                    //   behavior: "like",
-                      likesCnt: current.likesCnt + 1,
-                    }));
-                  });
-              }
+              axios
+                .post(`http://localhost:5001/comments`, {
+                  comment: input_text.current.value,
+                  postId: params.id,
+                })
+                .then((response) => {
+                  setComment((current) => [...current, response.data]);
+                });
             }}
           >
-            {data?.likeByMe && "[ME]"} 좋아요 {data?.likesCnt}
-          </button>
-        </ImageDiv>
-        <InfoDiv>
-          <InfoBox>
-            <Info>
-              <h1>{data?.num}</h1>
-            </Info>
-            <Info>
-              <h1>{data?.name}</h1>
-            </Info>
-            <Info>
-              <InfoTitle>특성</InfoTitle>
-            </Info>
-            <Info>{data?.element}</Info>
-            <Info>
-              <InfoTitle>설명</InfoTitle>
-            </Info>
-            <Info>{data?.info}</Info>
-          </InfoBox>
-        </InfoDiv>
-      </ContainerImage>
+            버튼
+          </Button>
+        </InputDiv>
 
-      {/* 인풋 div */}
-      <InputDiv>
-        <Input type="text" ref={input_text} />
-        <Button
-          onClick={() => {
-            axios
-              .post(`http://localhost:5001/comments`, {
-                comment: input_text.current.value,
-                postId: params.id,
-              })
-              .then((response) => {
-                setComment((current) => [...current, response.data]);
-              });
-          }}
-        >
-          버튼
-        </Button>
-      </InputDiv>
+        <div>
+          <Ul>
+            {comments.map((comment, index) => {
+              return (
+                <div key={index}>
+                  <div>
+                    <TitleP>
+                      <span>{comment.nickname}</span>
+                      <span> | </span>
+                      <span>{comment.createdAt}</span>
+                    </TitleP>
+                  </div>
 
-      <div>
-        <Ul>
-          {comments.map((comment, index) => {
-            return (
-              <div key={index}>
-                <div>
-                  <TitleP>
-                    <span>{comment.nickname}</span>
-                    <span> | </span>
-                    <span>{comment.createdAt}</span>
-                  </TitleP>
+                  <div>
+                    <CommentP>
+                      <span>{comment.comment}</span>
+                    </CommentP>
+                  </div>
+                  <button
+                    onClick={() => {
+                      axios
+                        .patch(`http://localhost:5001/comments/${comment.id}`, {
+                          comment: input_text.current.value,
+                        })
+                        .then((response) => {
+                          setComment((current) =>
+                            current.map((value) => {
+                              if (comment.id === value.id) {
+                                value.comment = input_text.current.value;
+                              }
+                              return value;
+                            })
+                          );
+                        });
+                    }}
+                  >
+                    수정
+                  </button>
+                  <button
+                    onClick={() => {
+                      axios
+                        .delete(`http://localhost:5001/comments/${comment.id}`)
+                        .then((response) => {
+                          setComment((current) =>
+                            current.filter((value) => {
+                              return comment.id !== value.id;
+                            })
+                          );
+                        });
+                    }}
+                  >
+                    삭제
+                  </button>
                 </div>
-
-                <div>
-                  <CommentP>
-                    <span>{comment.comment}</span>
-                  </CommentP>
-                </div>
-                <button
-                  onClick={() => {
-                    axios
-                      .patch(`http://localhost:5001/comments/${comment.id}`, {
-                        comment: input_text.current.value,
-                      })
-                      .then((response) => {
-                        setComment((current) =>
-                          current.map((value) => {
-                            if (comment.id === value.id) {
-                              value.comment = input_text.current.value;
-                            }
-                            return value;
-                          })
-                        );
-                      });
-                  }}
-                >
-                  수정
-                </button>
-                <button
-                  onClick={() => {
-                    axios
-                      .delete(`http://localhost:5001/comments/${comment.id}`)
-                      .then((response) => {
-                        setComment((current) =>
-                          current.filter((value) => {
-                            return comment.id !== value.id;
-                          })
-                        );
-                      });
-                  }}
-                >
-                  삭제
-                </button>
-              </div>
-            );
-          })}
-        </Ul>
-      </div>
+              );
+            })}
+          </Ul>
+        </div>
       </Container>
     </>
   );
 };
 
 const Container = styled.div`
-padding-top: 40px;
-`
+  padding-top: 40px;
+`;
 
 const ContainerImage = styled.div`
-    
   border: 1px solid gray;
   margin: 0px auto;
   margin-bottom: 30px;

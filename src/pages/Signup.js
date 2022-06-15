@@ -8,7 +8,11 @@ import "./App.css";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { userCREATE, hasEMAIL, hasNICKNAME } from "../redux/modules/user";
+import {
+  userCREATE,
+  emailcheckDB,
+  nicknamecheckDB,
+} from "../redux/modules/user";
 import { actionCreators as userActions } from "../redux/modules/user";
 import Header from "../components/Header";
 
@@ -24,7 +28,7 @@ const Signup = () => {
 
   // 닉네임 제한 조건 : 3자리 이상 9자리 이하 한글(초성도x)/영문
   const is_nickname = (nickname) => {
-    let _reg = /^(?=.*[a-z0-9가-힣])[a-z0-9가-힣]{3,9}$/;
+    let _reg = /^(?=.*[a-zA-Z0-9ㄱ-ㅎ가-힣])[a-zA-Z0-9ㄱ-ㅎ가-힣]{3,9}$/;
     return _reg.test(nickname);
   };
 
@@ -94,18 +98,18 @@ const Signup = () => {
       alert("아이디를 입력해주세요");
       return;
     } else {
-      dispatch(hasEMAIL(email));
+      dispatch(emailcheckDB(email));
     }
   };
 
   //닉네임 중복검사
   const nicknameDubCheck = () => {
     if (nickname === "") {
-      // alert("닉네임을 입력해주세요");
+      alert("닉네임을 입력해주세요");
       return;
     } else {
-      // console.log(nickname);
-      dispatch(hasNICKNAME(nickname));
+      console.log(nickname);
+      dispatch(nicknamecheckDB(nickname));
     }
   };
 
@@ -142,8 +146,8 @@ const Signup = () => {
           <button
             className="CheckButton"
             onClick={() => {
-              // emailDubCheck()
-              // console.log(emailDubCheck());
+              console.log("아이디 중복확인 클릭");
+              emailDubCheck();
             }}
           >
             중복 확인
@@ -160,7 +164,10 @@ const Signup = () => {
           />
           <button
             className="CheckButton"
-            // onClick={console.log(nicknameDubCheck())}
+            onClick={() => {
+              console.log("닉네임 중복확인 클릭");
+              nicknameDubCheck();
+            }}
           >
             중복 확인
           </button>
