@@ -1,7 +1,7 @@
 //src > redux > modules > user.js
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { deleteCookie, setCookie, getCookie } from "../../shared/Cookie";
+import { setCookie } from "../../shared/Cookie";
 
 //axios
 //회원 정보 저장하기 post signupDB //axios.post(url[, data[, config]])
@@ -10,10 +10,8 @@ export const signupDB = (userinfo) => {
     try {
       await axios
         .post(
-          "http://localhost:5001/users",
-          userinfo, //email, nickname, pw 정보 담겨 있음.
-          /*, {headers: {'Authorization': '내 토큰 보내주기'}}*/
-          { withCredentials: true }
+          "http://13.124.220.124/user/signup",
+          userinfo //email, nickname, pw 정보 담겨 있음.
         )
         .then((request) => {
           // console.log(request.data);
@@ -22,7 +20,7 @@ export const signupDB = (userinfo) => {
         });
     } catch (error) {
       console.log("failed", error);
-      alert("중복 확인이 필요합니다");
+      // alert("중복 확인이 필요합니다");
     }
   };
 };
@@ -30,11 +28,12 @@ export const signupDB = (userinfo) => {
 export const emailcheckDB = (email) => {
   return function (dispatch) {
     axios
-      .get("http://localhost:5001/users")
+      .get(`http://13.124.220.124/user/emailDupCheck/${email}`)
       .then((response) => {
+        console.log(response);
         const result = dispatch(hasEMAIL(response.data)); //true(사용가능) or false(중복)
-        // console.log(result);
-        if (result === false) {
+        console.log(result.payload);
+        if (result.payload === false) {
           alert("가입된 이메일입니다");
         } else {
           alert("사용 가능합니다");
@@ -50,11 +49,11 @@ export const emailcheckDB = (email) => {
 export const nicknamecheckDB = (nickname) => {
   return async function (dispatch) {
     axios
-      .get("http://localhost:5001/users")
+      .get(`http://13.124.220.124/user/nameDupCheck/${nickname}`)
       .then((response) => {
         const result = dispatch(hasNICKNAME(response.data)); //true(사용가능) or false(중복)
-        console.log(result);
-        if (result === false) {
+        console.log(result.payload);
+        if (result.payload === false) {
           alert("사용 중인 닉네임입니다. 다른 닉네임을 사용해주세요");
         } else {
           alert("사용 가능합니다");
@@ -68,48 +67,30 @@ export const nicknamecheckDB = (nickname) => {
 
 //회원 찾기 (로그인) 서버에 email(id), pw를 제공(request)하고 유저 정보와 토큰을 받아 저장.
 export const loginDB = (loginUserinfo) => {
-  return function (dispatch) {
-    axios
-      .post("http://localhost:5001/users", loginUserinfo, {
-        //email, pw 정보 담김.
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getCookie("token")}`,
-        },
-      })
-      .then((response) => {
-        // console.log(response);
-        localStorage.setItem("refreshToken", response.data["refreshToken"]);
-        setCookie("accessToken", response.data["accessToken"]);
-        dispatch(userLOGIN({ is_login: true }));
-      })
+  return async function (dispatch) {
+    await axios
+      .post("http://13.124.220.124/user/login", loginUserinfo)
 
-      .catch((error) => {
-        console.log("failed", error);
+      .then((response) => {
+        console.log(response);
+        const accessToken = response.data.token;
+        // console.log(accessToken);
+        setCookie("is_login", `${accessToken}`);
+        const result = response.data.result;
+        // 저장된 토큰으로 login 여부 확인
+        if (result) {
+          dispatch(userLOGIN({ is_login: true }));
+        } else {
+          alert(response.data.errorMsg);
+        }
       });
   };
 };
 
-// 로그아웃
-export const Logout = () => {
-  return function (dispatch) {
-    deleteCookie("token");
-    localStorage.removeItem("refreshToken");
-    dispatch(userLOGOUT());
-    const logOutInfo = {
-      is_login: false,
-    };
-  };
-};
-
-// 로그인 유지
-
 //action, action function, reducer
 export const User = createSlice({
   name: "users",
-  initialState: {
-    list: [{ email: null, nickname: null, is_login: false }],
-  },
+  initialState: { list: [{ is_login: false }] },
   reducers: {
     //회원 정보 저장
     userCREATE: (state, action) => {
@@ -119,6 +100,7 @@ export const User = createSlice({
     //회원 정보 불러오기
     userLOGIN: (state, action) => {
       state.list = action.payload;
+      console.log(action.payload);
     },
     //ID(email) 중복 확인
     hasEMAIL: (state, action) => {
@@ -140,6 +122,8 @@ export const User = createSlice({
 const actionCreators = {
   signupDB,
   loginDB,
+  nicknamecheckDB,
+  emailcheckDB,
 };
 
 export { actionCreators };

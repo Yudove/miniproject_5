@@ -6,31 +6,34 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as Cookie } from "../components/pokemonLogo.svg";
 import { Helmet } from "react-helmet";
-
-//로그인 check , 로그아웃(signout), auth? 임포트 필요
+import { useSelector } from "react-redux";
 
 const Header = () => {
   const navigate = useNavigate();
-
+  const user = useSelector((state) => state.user);
+  console.log(user.list.is_login);
   //로그인했을 때 다른 헤더 보이기
   const [is_login, setIsLogin] = useState(false);
 
-  const loginCheck = async (user) => {
-    if (user) {
+  //로그아웃 클릭 시 쿠키 삭제
+  const deleteCookie = (is_login) => {
+    let date = new Date("2021-01-01").toUTCString();
+    document.cookie = is_login + "=; expires=" + date;
+    setIsLogin(false);
+    window.location.reload();
+  };
+  //로그인 check 실행
+  useEffect(() => {
+    if (user.list.is_login) {
       setIsLogin(true);
     } else {
       setIsLogin(false);
     }
-  };
-
-  //로그인 check 실행
-  useEffect(() => {
-    // onAuthStateChanged(auth, loginCheck);
-  }, []);
+  }, [user.list.is_login]);
 
   if (is_login) {
     return (
-      //웹페이지의 제목
+      /*웹페이지의 제목*/
       <>
         <Helmet>
           <title>띠부띠부</title>
@@ -92,7 +95,9 @@ const Header = () => {
                 width: "6em",
               }}
               onClick={() => {
-                // signOut(auth);
+                console.log("로그아웃");
+                deleteCookie();
+                // window.location.reload();
               }}
             >
               로그아웃
@@ -102,10 +107,9 @@ const Header = () => {
       </>
     );
   }
-
   return (
-    //웹페이지의 제목
     <>
+      {/*웹페이지의 제목*/}
       <Helmet>
         <title>띠부띠부</title>
         <meta property="og:title" content="포켓몬 온라인 띠부띠부" />

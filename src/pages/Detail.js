@@ -6,8 +6,8 @@ import Header from "../components/Header";
 
 const Detail = () => {
   const params = useParams();
+  const detail_id = params.id;
   const pokemonId = Number(params.id) + 1;
-
   const [comments, setComment] = useState([]);
 
   const [info, setInfo] = useState({
@@ -26,12 +26,10 @@ const Detail = () => {
       setData(response.data);
       console.log(pokemonId);
     });
-    axios
-      .get(`http://13.124.220.124/comment/${pokemonId}`)
-      .then((response) => {
-        // setComment(response.data);
-        console.log(response);
-      });
+    axios.get(`http://13.124.220.124/comment/${pokemonId}`).then((response) => {
+      // setComment(response.data);
+      console.log(response);
+    });
   }, []);
 
   const deletePost = (id) => {
@@ -44,18 +42,75 @@ const Detail = () => {
 
   return (
     <>
-    <Header />
+      <Header />
       {/* 이미지 div */}
       <Container>
-      <ContainerImage>
-        <ImageDiv>
-          <Div>
-            <img
-              style={{ width: "300px", height: "300px" }}
-              src={data?.imageUrl}
-            />
-          </Div>
-          <button
+        <ContainerImage>
+          <ImageDiv>
+            <Div>
+              <img
+                style={{ width: "300px", height: "300px" }}
+                src={data?.imageUrl}
+              />
+            </Div>
+            <button
+              onClick={() => {
+                if (data?.likeByMe) {
+                  axios
+                    .post(`http://localhost:5001/pokemon/${detail_id}`, {
+                      // behavior: "unlike",
+                      likesCnt: data.likesCnt - 1,
+                    })
+                    .then((response) => {
+                      setData((current) => ({
+                        ...current,
+                        //   behavior: "unlike",
+                        likesCnt: current.likesCnt - 1,
+                      }));
+                    });
+                } else {
+                  axios
+                    .post(`http://localhost:5001/pokemon/${detail_id}`, {
+                      // behavior: "like",
+                      likesCnt: data.likesCnt + 1,
+                    })
+                    .then((response) => {
+                      setData((current) => ({
+                        ...current,
+                        //   behavior: "like",
+                        likesCnt: current.likesCnt + 1,
+                      }));
+                    });
+                }
+              }}
+            >
+              {data?.likeByMe && "[ME]"} 좋아요 {data?.likesCnt}
+            </button>
+          </ImageDiv>
+          <InfoDiv>
+            <InfoBox>
+              <Info>
+                <h1>{data?.num}</h1>
+              </Info>
+              <Info>
+                <h1>{data?.name}</h1>
+              </Info>
+              <Info>
+                <InfoTitle>특성</InfoTitle>
+              </Info>
+              <Info>{data?.element}</Info>
+              <Info>
+                <InfoTitle>설명</InfoTitle>
+              </Info>
+              <Info>{data?.info}</Info>
+            </InfoBox>
+          </InfoDiv>
+        </ContainerImage>
+
+        {/* 인풋 div */}
+        <InputDiv>
+          <Input type="text" ref={input_text} />
+          <Button
             onClick={() => {
               if (data?.likeByMe) {
                 axios
@@ -66,7 +121,7 @@ const Detail = () => {
                   .then((response) => {
                     setData((current) => ({
                       ...current,
-                    //   behavior: "unlike",
+                      //   behavior: "unlike",
                       likesCnt: current.likesCnt - 1,
                     }));
                   });
@@ -79,123 +134,84 @@ const Detail = () => {
                   .then((response) => {
                     setData((current) => ({
                       ...current,
-                    //   behavior: "like",
+                      //   behavior: "like",
                       likesCnt: current.likesCnt + 1,
                     }));
                   });
               }
             }}
           >
-            {data?.likeByMe && "[ME]"} 좋아요 {data?.likesCnt}
-          </button>
-        </ImageDiv>
-        <InfoDiv>
-          <InfoBox>
-            <Info>
-              <h1>{data?.num}</h1>
-            </Info>
-            <Info>
-              <h1>{data?.name}</h1>
-            </Info>
-            <Info>
-              <InfoTitle>특성</InfoTitle>
-            </Info>
-            <Info>{data?.element}</Info>
-            <Info>
-              <InfoTitle>설명</InfoTitle>
-            </Info>
-            <Info>{data?.info}</Info>
-          </InfoBox>
-        </InfoDiv>
-      </ContainerImage>
+            버튼
+          </Button>
+        </InputDiv>
+        <div>
+          <Ul>
+            {comments.map((comment, index) => {
+              return (
+                <div key={index}>
+                  <div>
+                    <TitleP>
+                      <span>{comment.nickname}</span>
+                      <span> | </span>
+                      <span>{comment.createdAt}</span>
+                    </TitleP>
+                  </div>
 
-      {/* 인풋 div */}
-      <InputDiv>
-        <Input type="text" ref={input_text} />
-        <Button
-          onClick={() => {
-            axios
-              .post(`http://13.124.220.124/comment/${pokemonId}`, {
-                comment: input_text.current.value,
-                postId: params.id,
-              })
-              .then((response) => {
-                setComment((current) => [...current, response.data]);
-              });
-          }}
-        >
-          버튼
-        </Button>
-      </InputDiv>
-
-      <div>
-        <Ul>
-          {comments.map((comment, index) => {
-            return (
-              <div key={index}>
-                <div>
-                  <TitleP>
-                    <span>{comment.nickname}</span>
-                    <span> | </span>
-                    <span>{comment.createdAt}</span>
-                  </TitleP>
-                </div>
-
-                <div>
-                  <CommentP>
-                    <span>{comment.comment}</span>
-                  </CommentP>
-                </div>
-                <div>
-                <button
-                  onClick={() => {
-                    axios
-                      .patch(`http://13.124.220.124/comment/${pokemonId}`, {
-                        comment: input_text.current.value,
-                      })
-                      .then((response) => {
-                        setComment((current) =>
-                          current.map((value) => {
-                            if (comment.id === value.id) {
-                              value.comment = input_text.current.value;
-                            }
-                            return value;
+                  <div>
+                    <CommentP>
+                      <span>{comment.comment}</span>
+                    </CommentP>
+                  </div>
+                  <div>
+                    <button
+                      onClick={() => {
+                        axios
+                          .patch(`http://13.124.220.124/comment/${pokemonId}`, {
+                            comment: input_text.current.value,
                           })
-                        );
-                      });
-                  }}
-                >
-                  수정
-                </button>
-                <button
-                  onClick={() => {
-                    axios
-                      .delete(`http://13.124.220.124/comment/${pokemonId}`)
-                      .then((response) => {
-                        setComment((current) =>
-                          current.filter((value) => {
-                            return comment.id !== value.id;
-                          })
-                        );
-                      });
-                  }}
-                >
-                  삭제
-                </button>
+                          .then((response) => {
+                            setComment((current) =>
+                              current.map((value) => {
+                                if (comment.id === value.id) {
+                                  value.comment = input_text.current.value;
+                                }
+                                return value;
+                              })
+                            );
+                          });
+                      }}
+                    >
+                      수정
+                    </button>
+                    <button
+                      onClick={() => {
+                        axios
+                          .delete(`http://13.124.220.124/comment/${pokemonId}`)
+                          .then((response) => {
+                            setComment((current) =>
+                              current.filter((value) => {
+                                return comment.id !== value.id;
+                              })
+                            );
+                          });
+                      }}
+                    >
+                      삭제
+                    </button>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </Ul>
-      </div>
+              );
+            })}
+          </Ul>
+        </div>
       </Container>
     </>
   );
 };
 
 const Container = styled.div`
-padding-top: 40px;
-`
+  padding-top: 40px;
+`;
 
 const ContainerImage = styled.div`
   border: 1px solid gray;
