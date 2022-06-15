@@ -143,7 +143,7 @@ const Signup = () => {
             className="CheckButton"
             onClick={() => {
               // emailDubCheck()
-              console.log(emailDubCheck());
+              // console.log(emailDubCheck());
             }}
           >
             중복 확인
@@ -160,7 +160,7 @@ const Signup = () => {
           />
           <button
             className="CheckButton"
-            onClick={console.log(nicknameDubCheck())}
+            // onClick={console.log(nicknameDubCheck())}
           >
             중복 확인
           </button>
