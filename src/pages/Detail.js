@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
-
+import Header from "../components/Header";
 const Detail = () => {
   const params = useParams();
   const detail_id = params.id;
@@ -41,6 +41,7 @@ const Detail = () => {
 
   return (
     <>
+      <Header />
       {/* 이미지 div */}
       <ContainerImage>
         <ImageDiv>
