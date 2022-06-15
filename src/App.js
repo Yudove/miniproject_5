@@ -1,24 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+//App.js
+
+import React, { useEffect } from "react";
+import { Routes, Route } from "react-router-dom";
+import Main from "../src/pages/Main";
+import Signup from "../src/pages/Signup";
+import Login from "../src/pages/Login";
+import Detail from "../src/pages/Detail";
+
+import { loadPostDB } from "../src/redux/modules/pokelist";
+import { useDispatch } from "react-redux";
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(loadPostDB());
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <React.Fragment>
+      <Routes>
+        <Route path="/" element={<Main />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/detail:index" exact element={<Detail />} />
+      </Routes>
+    </React.Fragment>
   );
 }
 
