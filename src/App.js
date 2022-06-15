@@ -23,7 +23,7 @@ function App() {
         <Route path="/" element={<Main />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/detail/:index" exact element={<Detail />} />
+        <Route path="/detail/:id" exact element={<Detail />} />
       </Routes>
     </React.Fragment>
   );
