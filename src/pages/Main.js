@@ -1,14 +1,13 @@
 //src > pages > Main.js
 //메인 페이지 (헤더는 따로)
 
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import "./App.css";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import sampleimg from "../components/000101.png";
 import { useSelector } from "react-redux";
-import axios from "axios";
 
 const Main = (props) => {
   //상세페이지 연결에 필요

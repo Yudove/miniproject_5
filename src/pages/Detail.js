@@ -3,6 +3,7 @@ import axios from "axios";
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
 import Header from "../components/Header";
+
 const Detail = () => {
   const params = useParams();
   const detail_id = params.id;

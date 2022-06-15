@@ -2,7 +2,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { deleteCookie, setCookie, getCookie } from "../../shared/Cookie";
-// import { useNavigate } from "react-router-dom";
 
 //axios
 //회원 정보 저장하기 post signupDB //axios.post(url[, data[, config]])
@@ -12,15 +11,18 @@ export const signupDB = (userinfo) => {
       await axios
         .post(
           "http://localhost:5001/users",
-          userinfo //email, nickname, pw 정보 담겨 있음.
+          userinfo, //email, nickname, pw 정보 담겨 있음.
           /*, {headers: {'Authorization': '내 토큰 보내주기'}}*/
+          { withCredentials: true }
         )
         .then((request) => {
-          console.log(request.data);
+          // console.log(request.data);
           dispatch(userCREATE(request.data));
+          alert("회원가입 성공");
         });
     } catch (error) {
       console.log("failed", error);
+      alert("중복 확인이 필요합니다");
     }
   };
 };
@@ -31,7 +33,7 @@ export const emailcheckDB = (email) => {
       .get("http://localhost:5001/users")
       .then((response) => {
         const result = dispatch(hasEMAIL(response.data)); //true(사용가능) or false(중복)
-        console.log(result);
+        // console.log(result);
         if (result === false) {
           alert("가입된 이메일입니다");
         } else {
@@ -76,7 +78,7 @@ export const loginDB = (loginUserinfo) => {
         },
       })
       .then((response) => {
-        console.log(response);
+        // console.log(response);
         localStorage.setItem("refreshToken", response.data["refreshToken"]);
         setCookie("accessToken", response.data["accessToken"]);
         dispatch(userLOGIN({ is_login: true }));
