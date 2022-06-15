@@ -210,8 +210,11 @@ const ImageDiv = styled.div`
   padding: 20px;
 `;
 
+
+
 const Div = styled.div`
   background-color: skyblue;
+  margin-bottom: 1px;
   margin-top: 30px;
   width: 300px;
   height: 300px;

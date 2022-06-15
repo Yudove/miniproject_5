@@ -11,7 +11,7 @@ const initialState = {
 //포켓몬 리스트 불러오기
 export const loadPostDB = () => {
   return async function (dispatch) {
-    await axios.get("http://localhost:5001/pokemon").then((response) => {
+    await axios.get("http://13.124.220.124").then((response) => {
       dispatch(pokelistLOAD(response.data));
     });
   };
